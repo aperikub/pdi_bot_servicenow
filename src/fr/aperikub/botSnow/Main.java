@@ -63,10 +63,19 @@ public class Main {
         // Uncomment and adjust the following lines if needed
         // options.addArguments("disable-default-apps");
         // options.addArguments("disable-popup-blocking");
-        // options.addArguments("no-default-browser-check");
-        // options.addArguments("no-first-run");
-        // options.addArguments("user-data-dir=C:\\Users\\aperi\\AppData\\Local\\Google\\Chrome\\User Data");
-        // options.addArguments("profile-directory=Default");
+
+        if(props.getProperty("no_interface").equals("true")){
+            options.addArguments("--headless");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+        }
+        if(props.getProperty("use_profile").equals("true")){
+            options.addArguments("no-default-browser-check");
+            options.addArguments("no-first-run");
+            options.addArguments("user-data-dir="+System.getProperty("user_dir"));
+            options.addArguments("profile-directory="+System.getProperty("profile_folder"));
+        }
         return options;
     }
 
