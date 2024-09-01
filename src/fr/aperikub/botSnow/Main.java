@@ -138,7 +138,7 @@ public class Main {
         }
 
         WebElement authCodeField = waitForElement(driver, By.id("passCode"), 20);
-        String totpCode = String.valueOf(new GoogleAuthProvider(props.getProperty("totp_key")).getCode());
+        String totpCode = String.format("%06d", new GoogleAuthProvider(props.getProperty("totp_key")).getCode());
         authCodeField.sendKeys(totpCode);
 
         WebElement authSubmitButton = driver.findElement(By.id("factor_verify_form_submit_button"));
