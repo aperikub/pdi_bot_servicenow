@@ -1,0 +1,29 @@
+pour wake via developer :
+    cookies :
+        - html du bouton accepter= <a class="call" role="button" tabindex="0">Accepter et continuer</a>
+        - html bouton requis uniquement = <a class="required" role="button" tabindex="0">Cookies requis uniquement</a>
+        - pour repérer la partie cookies : <div class="mainHeader consentHeader" tabindex="0" id="cookieMainHeader"><style>
+                                           .mainHeader {
+                                               border-bottom: 1px solid #ddd;
+                                               padding-bottom: 45px;
+                                           }
+                                           *:focus {
+                                           outline: 2px solid #3EAA2B !important;
+                                           border: none !important;
+                                           box-shadow: none !important;
+                                                       }
+
+                                           *:focus-visible {
+                                            outline: 2px solid #3EAA2B !important;
+                                           border: none !important;
+                                           box-shadow: none !important;
+                                           }
+
+                                           </style>
+                                           <div class="logo"><img src="https://consent.trustarc.com/get?name=servicenow_header_logo.svg" alt="ServiceNow" style="width: 205px"></div>
+                                           <div><h1>Vos préférences relatives aux cookies sur le site</h1></div></div>
+    cookies frame 2 :
+        - bouton fermer = <a class="close" tabindex="0" id="gwt-debug-close_id">Fermer</a>
+        - texte = <p>Vos préférences de cookies ont bien été mises à jour.</p>
+
+    developer_waking_page=https://developer.servicenow.com/dev.do#!/home

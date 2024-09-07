@@ -9,51 +9,76 @@ import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.Properties;
+import java.util.Set;
 
 public class Main {
-    static Properties props;
-
-    public static void main(String[] args) throws UnsupportedLookAndFeelException, InterruptedException {
+    static EncryptedProperties props;
+    static FileHandler fileHandler;
+    static PasswordEncryption passwordEncryption;
+    public static void main(String[] args) throws InterruptedException {
         initializeProperties();
 
+        try {
+            passwordEncryption = new PasswordEncryption(FileHandler.encryptionKey,FileHandler.encryptionSalt,FileHandler.encryptionIterations,FileHandler.encryptionKeyLength);
+        } catch (GeneralSecurityException e) {
+            Log.getInstance().addErrorLog("Error while encrypting data :" + e.getMessage());
+            throw new RuntimeException(e);
+        }
         ChromeOptions options = configureChromeOptions();
         WebDriver driver = new ChromeDriver(options);
-
+        fileHandler = new FileHandler();
+//        driver.get("https://google.com/");
+        fileHandler.encryptData(props,passwordEncryption,true);
+//        testLog(driver);
         if (logIntoDev(driver)) {
-            FileHandler fileHandler = new FileHandler();
-            fileHandler.saveDataInFile();
-            //TODO: trouver élément en hibernation
-            //WebElement openInstanceButton = waitForElement(driver,By.cssSelector(".dps-button.-round.-md.has-action.-external-action.has-button-and-icon"),20);
-//            if(openInstanceButton.isEnabled()){
-//                //instance is awake
-//                Log.getInstance().addInfoLog("instance is awake");
-//            }
-//            else{
-//                Log.getInstance().addInfoLog("instance is hibernating");
-//
-//            }
+            if(props.getProperty("generate_log_files").equals("true")){
+                fileHandler.saveDataInFile();
+            }
             logIntoInstance(driver);
 
-            // TODO: wake up instance
-            // WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(300));
-            // WebElement openInstanceButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".dps-button.-round.-md.has-action.-external-action.has-button-and-icon")));
-            // Log.getInstance().addInfoLog("waiting instance wake up");
-            // openInstanceButton.click();
+
         }
         Thread.sleep(5000);
 
         driver.quit();
     }
 
+    private static void testLog(WebDriver driver) {
+        driver.get("https://www.google.com");
+        WebElement truc = waitForElement(driver, By.id("JeSuisPasLa"), 300);
+
+    }
     private static void initializeProperties() {
-        props = new Properties();
+        props = new EncryptedProperties(passwordEncryption);
         try (InputStream is = new FileInputStream("config/login.properties")) {
             props.load(is);
         } catch (IOException e) {
             Log.getInstance().addErrorLog("Error while loading properties: " + e.getMessage());
         }
+    }
+
+    private static void openNewTab(WebDriver driver) {
+        // Obtenir l'onglet actuel
+        String originalTab = driver.getWindowHandle();
+
+        // Ouvrir un nouvel onglet
+        ((JavascriptExecutor) driver).executeScript("window.open();");
+
+        // Obtenir toutes les fenêtres ouvertes
+        Set<String> allTabs = driver.getWindowHandles();
+
+        // Passer au nouvel onglet (le dernier ouvert)
+        for (String tab : allTabs) {
+            if (!tab.equals(originalTab)) {
+                driver.switchTo().window(tab);
+                break;
+            }
+        }
+
+
     }
 
     private static ChromeOptions configureChromeOptions() {
@@ -73,16 +98,48 @@ public class Main {
         if(props.getProperty("use_profile").equals("true")){
             options.addArguments("no-default-browser-check");
             options.addArguments("no-first-run");
-            options.addArguments("user-data-dir="+System.getProperty("user_dir"));
-            options.addArguments("profile-directory="+System.getProperty("profile_folder"));
+            options.addArguments("user-data-dir="+System.getProperty("chrome_user_dir"));
+            options.addArguments("profile-directory="+System.getProperty("chrome_profile_folder"));
         }
         return options;
     }
+    private static boolean isInstanceHibernating(WebDriver driver) {
 
-    private static Boolean logIntoInstance(WebDriver driver) {
-        driver.get(props.getProperty("instance_url") + "/login.do");
+        try {
+            // Vérifier si la page indique que l'instance est en hibernation
+            WebElement hibernateMessage = waitForElement(driver, By.xpath("//*[contains(text(), 'Your instance is hibernating')]"), 10);
+            if (hibernateMessage != null) {
 
-        WebElement instanceUsernameField = driver.findElement(By.id("user_name"));
+                Log.getInstance().addInfoLog("Instance is hibernating.");
+                return true;
+            }
+        } catch (TimeoutException e) {
+            Log.getInstance().addInfoLog("Instance is not hibernating.");
+        }
+        return false;
+    }
+
+
+    private static Boolean logIntoInstance(WebDriver driver) throws InterruptedException {
+        var url = props.getProperty("instance_url") + "/login.do";
+        openNewTab(driver);
+        Thread.sleep(5000);
+        driver.get(url);
+        if(isInstanceHibernating(driver)){
+            ((JavascriptExecutor) driver).executeScript("alert('instance is hibernating, don't close the window, the bot will login when the instance will wake up');");
+        }
+
+
+
+        WebElement instanceUsernameField;
+        try {
+            instanceUsernameField = waitForElement(driver, By.id("user_name"),1500);
+        } catch (org.openqa.selenium.TimeoutException e) {
+            ((JavascriptExecutor) driver).executeScript("alert('TimeOut : "+e.getMessage()+"');");
+            Log.getInstance().addErrorLog(e.getMessage());
+            throw new RuntimeException(e);
+        }
+
         WebElement instancePasswordField = driver.findElement(By.id("user_password"));
         WebElement instanceLoginButton = driver.findElement(By.id("sysverb_login"));
 
@@ -96,8 +153,8 @@ public class Main {
     private static Boolean logIntoDev(WebDriver driver) throws InterruptedException {
         driver.get("https://signon.service-now.com/x_snc_sso_auth.do?pageId=username");
 
-        WebDriverWait waitDev = new WebDriverWait(driver, Duration.ofSeconds(20));
-        WebElement emailField = waitDev.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
+
+        WebElement emailField = waitForElement(driver, By.id("email"), 20);
         Thread.sleep(2000);
 
         fillOrCheckUserId(driver, emailField);
