@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="bot_servicenow:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/bot_servicenow_jar</output-path>
-    <root id="archive" name="bot servicenow.jar">
+    <root id="archive" name="bot servicenow v2.0.jar">
       <element id="module-output" name="bot servicenow" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/java mail/javax.mail.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/Selenium-4.23.1/jsr305-3.0.2.jar" path-in-jar="/" />
