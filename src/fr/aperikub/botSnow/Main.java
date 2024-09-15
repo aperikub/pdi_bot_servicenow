@@ -22,7 +22,8 @@ public class Main {
         initializeProperties();
 
         try {
-            passwordEncryption = new PasswordEncryption(FileHandler.encryptionKey,FileHandler.encryptionSalt,FileHandler.encryptionIterations,FileHandler.encryptionKeyLength);
+            passwordEncryption = new PasswordEncryption(FileHandler.encryptionKey,FileHandler.encryptionSalt,
+                    FileHandler.encryptionIterations, FileHandler.encryptionKeyLength);
         } catch (GeneralSecurityException e) {
             Log.getInstance().addErrorLog("Error while encrypting data :" + e.getMessage());
             throw new RuntimeException(e);
@@ -38,11 +39,8 @@ public class Main {
                 fileHandler.saveDataInFile();
             }
             logIntoInstance(driver);
-
-
         }
         Thread.sleep(5000);
-
         driver.quit();
     }
 
@@ -63,13 +61,10 @@ public class Main {
     private static void openNewTab(WebDriver driver) {
         // Obtenir l'onglet actuel
         String originalTab = driver.getWindowHandle();
-
         // Ouvrir un nouvel onglet
         ((JavascriptExecutor) driver).executeScript("window.open();");
-
         // Obtenir toutes les fenêtres ouvertes
         Set<String> allTabs = driver.getWindowHandles();
-
         // Passer au nouvel onglet (le dernier ouvert)
         for (String tab : allTabs) {
             if (!tab.equals(originalTab)) {
@@ -77,8 +72,6 @@ public class Main {
                 break;
             }
         }
-
-
     }
 
     private static ChromeOptions configureChromeOptions() {
