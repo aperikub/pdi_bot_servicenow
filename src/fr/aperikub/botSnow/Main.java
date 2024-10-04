@@ -19,7 +19,7 @@ public class Main {
     static FileHandler fileHandler;
     static PasswordEncryption passwordEncryption;
     public static void main(String[] args) throws InterruptedException {
-        initializeProperties();
+
 
         try {
             passwordEncryption = new PasswordEncryption(FileHandler.encryptionKey,FileHandler.encryptionSalt,
@@ -28,6 +28,7 @@ public class Main {
             Log.getInstance().addErrorLog("Error while encrypting data :" + e.getMessage());
             throw new RuntimeException(e);
         }
+        initializeProperties();
         ChromeOptions options = configureChromeOptions();
         WebDriver driver = new ChromeDriver(options);
         fileHandler = new FileHandler();

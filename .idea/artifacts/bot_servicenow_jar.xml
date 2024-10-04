@@ -1,9 +1,9 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="bot_servicenow:jar">
+  <artifact type="jar" name="bot servicenow:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/bot_servicenow_jar</output-path>
     <root id="archive" name="bot servicenow v2.0.jar">
       <element id="module-output" name="bot servicenow" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/java mail/javax.mail.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-codec-1.15.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/Selenium-4.23.1/jsr305-3.0.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/Selenium-4.23.1/failsafe-3.3.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/Selenium-4.23.1/guava-33.2.1-jre.jar" path-in-jar="/" />
@@ -85,8 +85,8 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/Selenium-4.23.1/opentelemetry-sdk-extension-autoconfigure-1.40.0-sources.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/Selenium-4.23.1/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/Selenium-4.23.1/opentelemetry-sdk-extension-autoconfigure-spi-1.40.0-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/java mail/javax.mail.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/googleauth/1.5.0/googleauth-1.5.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-codec-1.15.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
