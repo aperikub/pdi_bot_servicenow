@@ -1,3 +1,4 @@
+This bot's purpose is to maintain you're PDI active by automatically logging into it. It uses Selenium to control a browser (Chrome here).
 
 To run, the bot need the config/login.properties file (here renamed login_example.properties) with :
 -servicenow login [developer_login]
